@@ -1,6 +1,6 @@
 from enum import Enum
-from sqlalchemy import String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, Text, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.db import Base
 
@@ -24,10 +24,30 @@ class DateIdea(Base):
 
     rating: Mapped[int | None] = mapped_column(nullable=True, default=None)
 
+    comments: Mapped[list["Comment"]] = relationship(
+        back_populates="date_idea",
+        cascade="all, delete-orphan",
+    )
+
     def __repr__(self):
         return (
             f"DateIdea(id={self.id}, "
             f"title={self.title}, "
             f"status={self.status}, "
-            f"duration={self.duration})"
+            f"duration={self.duration}, "
+            f"rating={self.rating}, "
+            f"comments={self.comments})"
         )
+    
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    date_idea_id: Mapped[int] = mapped_column(ForeignKey("date_ideas.id"), nullable=False)
+
+    text: Mapped[str] = mapped_column(Text)
+
+    date_idea: Mapped["DateIdea"] = relationship(
+    back_populates="comments"
+    )

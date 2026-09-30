@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from database.db import SessionLocal
-from database.models import DateIdea, DateStatus
+from database.models import DateIdea, DateStatus, Comment
 
 
 class DateIdeaRepository:
@@ -39,6 +39,14 @@ class DateIdeaRepository:
     def get_by_id(self, idea_id: int) -> DateIdea | None:
         with SessionLocal() as session:
             return session.get(DateIdea, idea_id)
+
+    def get_by_status(self, status: DateStatus) -> list[DateIdea]:
+        with SessionLocal() as session:
+            statement = select(DateIdea).where(DateIdea.status == status.value)
+
+            return list(
+                session.scalars(statement).all()
+            )
 
     def update_status(
         self,
@@ -116,3 +124,31 @@ class DateIdeaRepository:
             session.commit()
 
             return True
+
+class CommentRepository:
+
+    def create(
+        self,
+        date_idea_id: int,
+        text: str,
+    ) -> "Comment":
+
+        with SessionLocal() as session:
+            comment = Comment(
+                date_idea_id=date_idea_id,
+                text=text,
+            )
+
+            session.add(comment)
+            session.commit()
+            session.refresh(comment)
+
+            return comment
+
+    def get_by_date_idea_id(self, date_idea_id: int) -> list[Comment]:
+        with SessionLocal() as session:
+            statement = select(Comment).where(Comment.date_idea_id == date_idea_id)
+
+            return list(
+                session.scalars(statement).all()
+            )

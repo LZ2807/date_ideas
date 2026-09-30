@@ -1,7 +1,7 @@
 import streamlit as st
 
 from database.models import DateIdea, DateStatus
-from database.repositories import DateIdeaRepository
+from database.repositories import CommentRepository, DateIdeaRepository
 statuses = list(DateStatus)
 
 
@@ -9,6 +9,7 @@ statuses = list(DateStatus)
 def render_date_card(
         idea: DateIdea,
         repo: DateIdeaRepository,
+        repo_comment: CommentRepository
 ):
         # ----- Helper Functions -----
     def handle_status_change(idea_id: int):
@@ -25,8 +26,8 @@ def render_date_card(
                     st.write(idea.title)
                     st.write(idea.description)
                     st.write(f"Duration: {idea.duration} hours")
-                    status_key = f"status_{idea.id}"
-                    idea_status=st.selectbox(
+                    key = f"status_{idea.id}"
+                    st.selectbox(
                         "Status",
                         options=statuses,
                         format_func=lambda s: s.value.capitalize(),
@@ -35,7 +36,12 @@ def render_date_card(
                         on_change=handle_status_change,
                         args=(idea.id,)
                     )
-                    rating = st.feedback(options="stars", key=f"rating_{idea.id}", default=idea.rating, on_change=handle_rating_change, args=(idea.id,))
+                
+                    st.write("Comments:")
+                    for comment in repo_comment.get_by_date_idea_id(idea.id):
+                        st.write(f"- {comment.text}")
+                    if idea.status == DateStatus.DONE.value:
+                        st.feedback(options="stars", key=f"rating_{idea.id}", default=idea.rating, on_change=handle_rating_change, args=(idea.id,))
     
                     with st.container(wrap=True, horizontal=True):
                         st.button("❌", key=f"delete_{idea.id}", on_click=repo.delete, args=(idea.id,))

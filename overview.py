@@ -5,7 +5,7 @@ from database.db import init_db
 import database.models
 
 from database.models import DateStatus
-from database.repositories import DateIdeaRepository
+from database.repositories import CommentRepository, DateIdeaRepository
 
 init_db()
 
@@ -13,6 +13,7 @@ init_db()
 
 repo = DateIdeaRepository()
 statuses = list(DateStatus)
+repo_comment = CommentRepository()
 
 
 
@@ -42,5 +43,5 @@ if st.button("Add Date Idea"):
 
 with st.container(wrap=True):
     for idea in repo.get_all():
-        render_date_card(idea, repo)
+        render_date_card(idea, repo, repo_comment)
         
