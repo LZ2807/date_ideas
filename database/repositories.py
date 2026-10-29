@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import select
 
 from database.db import SessionLocal
@@ -47,7 +49,31 @@ class DateIdeaRepository:
             return list(
                 session.scalars(statement).all()
             )
+    def get_by_day_planned(self, day: datetime) -> list[DateIdea]:
+        with SessionLocal() as session:
+            statement = select(DateIdea).where(DateIdea.day_planned == day)
 
+            return list(
+                session.scalars(statement).all()
+            )
+    def update_day_planned(
+        self,
+        idea_id: int,
+        day_planned: datetime | None,
+    ) -> DateIdea | None:
+
+        with SessionLocal() as session:
+            idea = session.get(DateIdea, idea_id)
+
+            if idea is None:
+                return None
+
+            idea.day_planned = day_planned
+            session.commit()
+            session.refresh(idea)
+
+            return idea
+        
     def update_status(
         self,
         idea_id: int,
@@ -65,7 +91,7 @@ class DateIdeaRepository:
             session.refresh(idea)
 
             return idea
-        
+    
     def update_rating(
         self,
         idea_id: int,
@@ -152,3 +178,26 @@ class CommentRepository:
             return list(
                 session.scalars(statement).all()
             )
+    def delete(self, comment_id: int) -> bool:
+        with SessionLocal() as session:
+            comment = session.get(Comment, comment_id)
+
+            if comment is None:
+                return False
+
+            session.delete(comment)
+            session.commit()
+
+            return True
+    def update(self, comment_id: int, text: str) -> Comment | None:
+        with SessionLocal() as session:
+            comment = session.get(Comment, comment_id)
+
+            if comment is None:
+                return None
+
+            comment.text = text
+            session.commit()
+            session.refresh(comment)
+
+            return comment

@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from sqlalchemy import String, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -24,6 +25,8 @@ class DateIdea(Base):
 
     rating: Mapped[int | None] = mapped_column(nullable=True, default=None)
 
+    day_planned: Mapped[datetime | None] = mapped_column(nullable=True, default=None)
+
     comments: Mapped[list["Comment"]] = relationship(
         back_populates="date_idea",
         cascade="all, delete-orphan",
@@ -36,6 +39,7 @@ class DateIdea(Base):
             f"status={self.status}, "
             f"duration={self.duration}, "
             f"rating={self.rating}, "
+            f"day_planned={self.day_planned}, "
             f"comments={self.comments})"
         )
     

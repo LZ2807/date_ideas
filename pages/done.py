@@ -21,6 +21,6 @@ st.title("❤️ Done Dates")
 
 with st.container(wrap=True):
     for idea in repo.get_by_status(DateStatus.DONE):
-        render_date_card(idea, repo)
+        render_date_card(idea, repo, repo_comment)
 
 
