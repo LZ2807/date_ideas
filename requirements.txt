@@ -1,2 +1,5 @@
 streamlit
 sqlalchemy
+plotly
+pandas
+streamlit-calendar

@@ -13,6 +13,7 @@ pages = {
         st.Page("pages/map.py", title="Map"),
 
         st.Page("pages/date_detail.py", title="Date Details", visibility="hidden"),
+        st.Page("pages/calendar.py", title="Calendar"),
     ]
 }
 
