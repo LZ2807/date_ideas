@@ -3,3 +3,4 @@ sqlalchemy
 plotly
 pandas
 streamlit-calendar
+psycopg2-binary
