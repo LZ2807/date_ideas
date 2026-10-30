@@ -9,7 +9,6 @@ from database.repositories import CommentRepository, DateIdeaRepository
 init_db()
 
 
-
 repo = DateIdeaRepository()
 statuses = list(DateStatus)
 repo_comment = CommentRepository()
